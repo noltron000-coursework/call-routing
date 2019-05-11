@@ -2,6 +2,8 @@
 .vscode/*
 route-costs-10000000.txt
 
+# generated data files
+dict/*
 
 # Created by https://www.gitignore.io/api/pycharm
 # Edit at https://www.gitignore.io/?templates=pycharm
