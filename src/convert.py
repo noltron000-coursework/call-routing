@@ -1,6 +1,5 @@
 import os
 
-
 def parse_data(data_files):
     """
     read_data() will check if the python data file exists.
@@ -39,9 +38,41 @@ def parse_data(data_files):
             txt_file.close()
             py_file.close()
 
+def _make_phone_dict(file):
+    # start with an empty dictionary of phone numbers.
+    phone_dict = {}
+    for line in file.readlines():
+        # get the phone number from this line.
+        # remove the \n newline char, its not needed.
+        phone = line[:-2]
+        # add the phone number to the dictionary.
+        # notice how there is no value associated with it.
+        phone_dict[phone] = None
+    # return the comprehensive phone_dict we just created.
+    return phone_dict
+
+def _make_route_dict(file):
+    # start with an empty dictionary of route costs.
+    route_dict = {}
+    for line in file.readlines():
+        # get the route and price from this line.
+        route, price = line.split(",")
+        # NOTE: might need to trim characters.
+        price = float(price)
+
+        # check if route exists.
+        # if it does, add the price to its price list.
+        if route_dict[route]:
+            route_dict[route].append(price)
+        # otherwise, create a new price list with one value.
+        else:
+            route_dict[route] = [price]
+    # return the comprehensive route_dict we just created.
+    return phone_dict
+
 if __name__ == "__main__":
     # all the names of the data files.
-    main_data_files = (
+    main_phone_data_files = (
         "phone-numbers-3",
         "phone-numbers-10",
         "phone-numbers-100",
