@@ -87,10 +87,10 @@ Input data comes in several plain text files. Some represent carrier route lists
 
 Each carrier's routes and their associated costs are given in a single file. Each line is a single route formatted as a comma-separated pair: a route's normalized prefix (starting with a '`+`'), then its cost in USD (a floating-point number). For example:
 
-	+1512,0.04
-	+1415,0.02
-	+1415234,0.03
-	+1415246,0.01
+    +1512,0.04
+    +1415,0.02
+    +1415234,0.03
+    +1415246,0.01
 
 These files are named "`carrier-routes-N.txt`" where N is an integer. (Carrier 1, 2, 3, ...)
 Using the carrier route list above, the cost of calling `+14152345678` would be `$0.03`, as it matches with the prefixes `+1415` and `+1415234` (longest match), but not with `+1415246`.
@@ -99,9 +99,9 @@ Using the carrier route list above, the cost of calling `+14152345678` would be 
 
 The phone numbers you need to look up the route costs for are each normalized and given on separate lines of a file. For example:
 
-	+15124156620
-	+14152345678
-	+19876543210
+    +15124156620
+    +14152345678
+    +19876543210
 
 These files are named "`phone-numbers-N.txt`" where `N` is an integer.
 
@@ -109,9 +109,9 @@ These files are named "`phone-numbers-N.txt`" where `N` is an integer.
 
 After finding the least cost route for each phone number, write the number and its cost on a comma-separated line of a new text file. If there is no route for a number, write `0`. For example, using the carrier route list and phone numbers given above, the output is:
 
-	+15124156620,0.04
-	+14152345678,0.03
-	+19876543210,0
+    +15124156620,0.04
+    +14152345678,0.03
+    +19876543210,0
 
 Name these files "`route-costs-N.txt`" where `N` is the scenario number (see below).
 
