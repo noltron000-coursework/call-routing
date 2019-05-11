@@ -64,13 +64,16 @@ def _make_route_dict(file):
         price = float(price)
 
         # check if route exists.
-        # if it does, add the price to its price list.
         if route in route_dict:
-            # TODO just check if its greater or lesser
-            route_dict[route].append(price)
+            # if it does, check its price.
+            if price < route_dict[route]:
+                # if the price is lower, update it!
+                route_dict[route] = price
+            else:
+                pass
         # otherwise, create a new price list with one value.
         else:
-            route_dict[route] = [price]
+            route_dict[route] = price
     # return the comprehensive route_dict we just created.
     return route_dict
 
