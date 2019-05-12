@@ -2,93 +2,83 @@
 #
 # You have a carrier route list with 100,000 (100K) entries (in arbitrary order)
 # and a list of 1000 phone numbers. How can you operationalize the route cost lookup problem?
+
+# import python modules
 import time
-import os
-import resource
 import platform
+import resource
 
-THIS_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', "data"))
-
+# run convert module
+import convert
+convert.main()
 
 class CallRouting:
+    def __init__(self, phone_numbers, route_costs):
+        # import data dictionaries
+        # from given text file inputs
+        phone_dict = __import__(phone_numbers)
+        route_dict = __import__(route_costs)
 
-    def __init__(self, phone_number_file, routing_file):
-        self.routes_path = os.path.join(THIS_FOLDER, routing_file)  # A path string of to the route file
-        self.phone_numbers_path = os.path.join(THIS_FOLDER,
-                                               phone_number_file)  # A path string of to the phone number  file
-        self.dict_of_routes = {}  # dictionary of string : double  {route number : lowest price}
-        self.list_of_numbers = []  # list of strings  [phone numbers]
+        # dictionary of string:double...
+        # {route number : lowest price}
+        self.route_dict = route_dict.dictionary
 
-    def run(self):
-        self._get_routes_dict()
-        self._get_phone_numbers()
-        self._get_prices()
+        # dictionary of phone numbers...
+        # {phone number : NONE }
+        self.phone_dict = phone_dict.dictionary
 
-    def _get_phone_numbers(self):
-        """Convert the given phone numbers file to a list of phone number [String]"""
-        with open(self.phone_numbers_path) as f:
-            file = f.readlines()
-            for number in file:
-                self.list_of_numbers.append(number[:-2])
+        # our goal is to take these two dictionaries, &
+        # generate a list of numbers with prices.
+        self.get_prices()
 
-    def _get_routes_dict(self):
-        """Convert the given routes file to a dictionary {route number : lowest price}"""
-        with open(self.routes_path) as f:
-            file = f.readlines()
+    def get_prices(self):
+        """
+        Get the lowest prices for each phone number.
+        Do this by matching the most matched prefix route.
+        """
+        phone_costs = {}
 
-            for line in file:
-                route_number, price = line.split(",")  # Split the route into route_number , price
+        for phone in self.phone_dict:  # loop through the list of phone numbers
+            prefix = ''  # Act as a searchable prefix for the phone number
+            for digit in phone:
+                prefix += digit  # Add a digit to the prefix
+                if prefix in self.route_dict:  # if the prefix is in the dictionary of routes
+                    phone_costs[phone] = self.route_dict[prefix]  # Set the price to the phone number
 
-                if route_number in self.dict_of_routes:  # Check if the route number existed in the dictionary
+            if phone not in phone_costs:  # The phone number doesn't have any matching prefixes
+                phone_costs[phone] = 0
 
-                    current_value = self.dict_of_routes[route_number]  # The existing price for the route
-                    new_value = float(price[:-1])  # The new price for the same route
-
-                    if new_value < current_value:  # Check if the new price is less than the existing price
-                        self.dict_of_routes[route_number] = new_value
-
-                else:
-                    self.dict_of_routes[route_number] = float(price[:-1])  # Set a new key value to the dictionary
-
-    def _get_prices(self):
-        """Get the lowest prices for each phone number by matching the most matched prefix route"""
-        price_for_phone = {}
-
-        for number in self.list_of_numbers:  # loop through the list of phone numbers
-            num_string = ''  # Act as a prefix for the phone number
-            for character in number:
-                num_string += character  # Add a character to the prefix
-                if num_string in self.dict_of_routes:  # if the prefix is in the dictionary of routes
-                    price_for_phone[number] = self.dict_of_routes[num_string]  # Set the price to the phone number
-
-            if number not in price_for_phone:  # The phone number doesn't have any matching prefixes
-                price_for_phone[number] = 0
-
-        for key in price_for_phone.keys():  # Print the expected output for the assignment
-            price = price_for_phone[key]
+        for key in phone_costs.keys():  # Print the expected output for the assignment
+            price = phone_costs[key]
             print(key + ',' + str(price))
 
 
-route = CallRouting('phone-numbers-1000.txt', 'route-costs-106000.txt')
+def benchmark():
+    # get memory usage
+    usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
-start = time.time()
-route.run()
-end = time.time()
-print('\nRuntime: ' + str(end - start))
+    # linux returns kb and macOS returns bytes,
+    # here we convert both to mb
+    if platform.system() == 'linux':
+        # convert kb to mb and round to 2 digits
+        usage = round(usage / float(1 << 10), 2)
+    else:
+        # convert bytes to mb and round to 2 digits
+        usage = round(usage / float(1 << 20), 2)
 
+    # print memory usage
+    print("Memory Usage: {} mb.".format(usage))
 
+if __name__ == "__main__":
+    # stopwatch ready, set, go!
+    start = time.time()
 
-# get memory usage
-usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # create CallRouter class.
+    route = CallRouting('phone-numbers-1000', 'route-costs-106000')
 
-# linux returns kb and macOS returns bytes,
-# here we convert both to mb
-if platform.system() == 'linux':
-    # convert kb to mb and round to 2 digits
-    usage = round(usage / float(1 << 10), 2)
-else:
-    # convert bytes to mb and round to 2 digits
-    usage = round(usage / float(1 << 20), 2)
+    # stopwatch finish!!
+    end = time.time()
 
-# print memory usage
-print("Memory Usage: {} mb.".format(usage))
+    # print benchmarks
+    print('\nRuntime: ' + str(end - start))
+    benchmark()

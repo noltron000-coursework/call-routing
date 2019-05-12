@@ -1,9 +1,13 @@
 .DS_Store
 .vscode/*
-route-costs-10000000.txt
 
+# length text data file
+route-costs-10000000.txt
 # generated data files
-dict/*
+phone-numbers-*.py
+route-costs-*.py
+
+__pycache__/*
 
 # Created by https://www.gitignore.io/api/pycharm
 # Edit at https://www.gitignore.io/?templates=pycharm

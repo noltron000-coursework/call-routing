@@ -1,9 +1,7 @@
 import os
 
-
-# get folders from using os
+SRC_FOLDER = os.path.abspath(os.path.dirname(__file__))
 DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
-DICT_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dict"))
 
 
 def parse_data(data_files, make_dict_helper):
@@ -12,18 +10,11 @@ def parse_data(data_files, make_dict_helper):
     if it doesn"t exist, it will open the text data file,
     & it will then create the respective python data file.
     """
-
-    try:  # create the dict folder if it doesn't exist
-        os.mkdir(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dict")))
-
-    except:  # otherwise, don't let python freak out haha!
-        pass
-
     # loop through each data file here.
     for file_name in data_files:
         # record the path of the data files.
         file_path_txt = os.path.join(DATA_FOLDER, file_name + ".txt")
-        file_path_py = os.path.join(DICT_FOLDER, file_name + ".py")
+        file_path_py = os.path.join(SRC_FOLDER, file_name + ".py")
 
         try: # do nothing if the python data file exists.
             # open the python file if it exists...
@@ -98,7 +89,8 @@ def main():
         "route-costs-600",
         "route-costs-35000",
         "route-costs-106000",
-        "route-costs-1000000"
+        "route-costs-1000000",
+        "route-costs-10000000",
     )
     # run the function process here.
     print('generating data files...')
