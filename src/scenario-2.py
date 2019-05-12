@@ -40,6 +40,8 @@ class CallRouting:
 
     def __repr__(self):
         """
+        String representation of a dictionary.
+        Lines up things pretty nicely!
         """
         pretty_dict = ""
         for key in self.price_dict:
@@ -89,7 +91,6 @@ class CallRouting:
                 self.price_dict[phone] = 0
         pass  # end for loop
 
-        # print the expected output for the assignment,
 def benchmark_memory():
     # get memory usage
     usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -111,7 +112,11 @@ if __name__ == "__main__":
     start = time.time()
 
     # create CallRouter class, and print its dict
-    route = CallRouting("phone-numbers-1000", "route-costs-106000")
+    route = CallRouting("phone-numbers-10000", "route-costs-10000000")
+    # route = CallRouting("phone-numbers-1000", "route-costs-106000")
+
+    # print the pricelist for the route;
+    # required as the expected result for the assignment
     print(route)
 
     # stopwatch finish!!
