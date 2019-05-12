@@ -1,5 +1,11 @@
 import os
 
+
+# get folders from using os
+DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
+DICT_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dict"))
+
+
 def parse_data(data_files, make_dict_helper):
     """
     read_data() will check if the python data file exists.
@@ -7,14 +13,11 @@ def parse_data(data_files, make_dict_helper):
     & it will then create the respective python data file.
     """
 
-    try: # create the dict folder if it doesn't exist
-        os.mkdir(os.path.abspath(os.path.join(os.path.dirname( __file__ ), "..", "dict")))
-    except: # otherwise, don't let python freak out haha!
-        pass 
+    try:  # create the dict folder if it doesn't exist
+        os.mkdir(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dict")))
 
-    # get folders from using os
-    DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname( __file__ ), "..", "data"))
-    DICT_FOLDER = os.path.abspath(os.path.join(os.path.dirname( __file__ ), "..", "dict"))
+    except:  # otherwise, don't let python freak out haha!
+        pass
 
     # loop through each data file here.
     for file_name in data_files:
@@ -29,9 +32,9 @@ def parse_data(data_files, make_dict_helper):
 
         except: # otherwise, process the text data file.
             # open text file for reading
-            txt_file = open(file_path_txt,"r")
+            txt_file = open(file_path_txt, "r")
             # create new python file for writing
-            py_file = open(file_path_py,"w+")
+            py_file = open(file_path_py, "w+")
 
             # generate dictionary using the helper function.
             dictionary = make_dict_helper(txt_file)
@@ -41,6 +44,7 @@ def parse_data(data_files, make_dict_helper):
             # close files for good practice
             txt_file.close()
             py_file.close()
+
 
 def _make_phone_dict(file):
     # start with an empty dictionary of phone numbers.
@@ -54,6 +58,7 @@ def _make_phone_dict(file):
         phone_dict[phone] = None
     # return the comprehensive phone_dict we just created.
     return phone_dict
+
 
 def _make_route_dict(file):
     # start with an empty dictionary of route costs.
@@ -77,6 +82,7 @@ def _make_route_dict(file):
     # return the comprehensive route_dict we just created.
     return route_dict
 
+
 def main():
     # all the names of the data files.
     phone_data_files = (
@@ -99,6 +105,7 @@ def main():
     parse_data(phone_data_files, _make_phone_dict)
     parse_data(route_data_files, _make_route_dict)
     print('...process completed!')
+
 
 if __name__ == "__main__":
     main()

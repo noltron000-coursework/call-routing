@@ -19,7 +19,7 @@ dict/*
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/*
-
+.pytest_cache/*
 # Generated files
 .idea/**/contentModel.xml
 
