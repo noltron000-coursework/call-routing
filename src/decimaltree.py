@@ -49,9 +49,9 @@ class DecimalSearchTree(object):
         # The inputted data will be a tuple = ("Carrier Name", (route number , route price))
         # Tree node data will be a tuple ("Carrier name", route price)
         self.size = 0
+        # What is items going to be? []
         # if items is not None:
         #     for item in items:
-        #         self.insert(item)
 
     def __repr__(self):
         """Return a string representation of this binary search tree."""
@@ -88,34 +88,6 @@ class DecimalSearchTree(object):
         # Return the node's data if found, or None
         return node.data if node is not None else None
 
-    # def insert(self, number, item):
-    #     """Insert the given item in order into this binary search tree.
-    #     Best case running time: O(1) is the tree is empty
-    #     Worst case running time: O(log10n) since the program have to do binary search to find the parent node
-    #                              n is the number of nodes in the tree"""
-    #     new_node = DecimalTreeNode(item)
-    #     # Handle the case where the tree is empty
-    #     if self.is_empty():
-    #         # Create a new root node
-    #         self.root = new_node
-    #         # Increase the tree size
-    #         self.size += 1
-    #         return
-    #
-    #     # Find the parent node of where the given item should be inserted
-    #     parent = self._find_parent_node_recursive(item, self.root)  # Could be None if root doesn't have any child nodes
-    #
-    #     # Check if the given item should be inserted left of parent node
-    #     if parent.data > item:
-    #         # Create a new node and set the parent's left child
-    #         parent.left = new_node
-    #     # Check if the given item should be inserted right of parent node
-    #     elif parent.data < item:
-    #         # Create a new node and set the parent's right child
-    #         parent.right = new_node
-    #     # Increase the tree size
-    #     self.size += 1
-
     def insert(self, number, data,  node):
         """TODO: Modify this code to the data type being passed in"""
         """Insert the number in order of the Decimal Search Tree recursively."""
@@ -139,37 +111,6 @@ class DecimalSearchTree(object):
 
         self.insert(remainder, data, node.next[index])  # Call recursively with the remainder and node at index
 
-
-    def _find_parent_node_recursive(self, item, node, parent=None):
-        """Return the parent node of the node containing the given item
-        (or the parent node of where the given item would be if inserted)
-        in this tree, or None if this tree is empty or has only a root node.
-        Search is performed recursively starting from the given node
-        (give the root node to start recursion)."""
-        # Check if starting node exists
-        if node is None:
-            # Not found (base case)
-            if parent:
-                return parent
-            else:
-                return None
-        #
-        # # Check if the given item matches the node's data
-        # if node.data == item:
-        #     # Return the parent of the found node
-        #     return parent
-        # # Check if the given item is less than the node's data
-        # for path in range(10):
-        #     if node.next[path].data == item:
-        #
-        # elif node.data > item:
-        #     # Recursively descend to the node's left child, if it exists
-        #     return self._find_parent_node_recursive(item, node.left, node)
-        # # Check if the given item is greater than the node's data
-        # elif node.data < item:
-        #     # Recursively descend to the node's right child, if it exists
-        #     return self._find_parent_node_recursive(item, node.right, node)
-
     def _find_node_recursive(self, number, node):
         """Return the node containing the given item in this decimal search tree,
         or None if the given item is not found. Search is performed recursively
@@ -178,7 +119,7 @@ class DecimalSearchTree(object):
         Worst case running time: O(log10n) -> O(log n) since the search size is reduced by 10 % with each iteration"""
 
         if len(number) == 0:  # Signalling that the tree has a path that contains all the numbers
-            return node.data
+            return node
 
         next_index = int(number[0])  # Get the first of number to act as an index to the node.next array
         remainder = number[1:]  # Get rid of the first number string of numbers
@@ -187,11 +128,3 @@ class DecimalSearchTree(object):
             return self._find_node_recursive(remainder, node.next[next_index])  # Keep search until the remainder is 0
         else:  # Signalling that there is no more path that contains matching number
             return None
-
-
-tree = DecimalSearchTree()
-# Insert one item to the tree
-tree.insert('00', 1, tree.root)
-tree.insert('00', 0.3, tree.root)
-child_node = tree.root.next[0]
-print(tree)

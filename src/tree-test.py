@@ -73,6 +73,7 @@ class DecimalSearchTreeTest(unittest.TestCase):
         assert tree.size == 0
 
     def test_insert(self):
+        """TODO: Modify this test after changing the input data"""
         tree = DecimalSearchTree()
         # Insert one item to the tree
         tree.insert('0', 1, tree.root)
@@ -88,10 +89,30 @@ class DecimalSearchTreeTest(unittest.TestCase):
         assert tree.height() == 2
 
     def test_inserting_lower_price(self):
+        """TODO: Modify this test after changing the input data"""
         tree = DecimalSearchTree()
         # Insert one item to the tree
         tree.insert('00', 1, tree.root)
         tree.insert('00', 0.3, tree.root)
         child_node = tree.root.next[0]
+        # Change the data since it is larger
         assert child_node.next[0].data == 0.3
+        tree.insert('01', 34, tree.root)
+        assert child_node.next[1].data == 34
+        # Doesn't change the data since it is larger
+        tree.insert('01', 43, tree.root)
+        assert child_node.next[1].data == 34
 
+    def test_contains(self):
+        """TODO: Modify this test after changing the input data"""
+        tree = DecimalSearchTree()
+        tree.insert('00', 1, tree.root)
+        assert tree.contains('00') is True
+        assert tree.contains('0') is True
+        assert tree.contains('01') is False
+
+    def test_search(self):
+        tree = DecimalSearchTree()
+        tree.insert('00', 0.3, tree.root)
+        assert tree.search('00') == 0.3
+        assert tree.search('001') is None
