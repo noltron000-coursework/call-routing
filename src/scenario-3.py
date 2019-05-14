@@ -11,6 +11,8 @@ import platform
 
 THIS_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', "data"))
 
+"""TODO: Might Have to modify this since I don't know if we have to know the carrier name"""
+
 
 class CallRouting:
 
@@ -36,15 +38,13 @@ class CallRouting:
         """Convert the given phone numbers file to a list of phone number [String]"""
         for path in self.phone_numbers_paths:
             with open(path) as f:
-                file = f.readlines()
-                for number in file:
-                    self.list_of_numbers.append(number[:-2])
+                self.list_of_numbers = f.read().splitlines()
 
     def _get_routes_dict(self):
         """Convert the given routes file to a dictionary {route number : lowest price}"""
         for path in self.routes_paths:
             with open(path) as f:
-                file = f.readlines()
+                file = f.read().splitlines()
 
                 for line in file:
                     route_number, price = line.split(",")  # Split the route into route_number , price
@@ -52,13 +52,13 @@ class CallRouting:
                     if route_number in self.dict_of_routes:  # Check if the route number existed in the dictionary
 
                         current_value = self.dict_of_routes[route_number]  # The existing price for the route
-                        new_value = float(price[:-1])  # The new price for the same route
+                        new_value = float(price)  # The new price for the same route
 
                         if new_value < current_value:  # Check if the new price is less than the existing price
                             self.dict_of_routes[route_number] = new_value
 
                     else:
-                        self.dict_of_routes[route_number] = float(price[:-1])  # Set a new key value to the dictionary
+                        self.dict_of_routes[route_number] = float(price)  # Set a new key value to the dictionary
 
     def _get_prices(self):
         """Get the lowest prices for each phone number by matching the most matched prefix route"""
@@ -80,7 +80,7 @@ class CallRouting:
             print(key + ',' + str(price))
 
 
-route = CallRouting(['phone-numbers-10000.txt'], ['route-costs-10000000.txt'] * 5)
+route = CallRouting(['phone-numbers-10000.txt'], ['route-costs-10000000.txt'])
 
 start = time.time()
 route.run()

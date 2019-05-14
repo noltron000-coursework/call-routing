@@ -27,9 +27,7 @@ class CallRouting:
     def _get_phone_numbers(self):
         """Convert the given phone numbers file to a list of phone number [String]"""
         with open(self.phone_numbers_path) as f:
-            file = f.readlines()
-            for number in file:
-                self.list_of_numbers.append(number[:-2])
+            self.list_of_numbers = f.read().splitlines()
 
     def _get_routes_dict(self):
         """Convert the given routes file to a dictionary {route number : lowest price}"""
@@ -75,8 +73,6 @@ start = time.time()
 route.run()
 end = time.time()
 print('\nRuntime: ' + str(end - start))
-
-
 
 # get memory usage
 usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss

@@ -1,4 +1,4 @@
-from decimaltree import DecimalTreeNode
+from decimaltree import DecimalTreeNode, DecimalSearchTree
 import unittest
 
 
@@ -54,12 +54,44 @@ class DecimalTreeTest(unittest.TestCase):
         # Attach child node at index 9
         node.next[9] = DecimalTreeNode(6)
         assert node.height() == 1
-        # Attach left-left grandchild node
+        # Attach grandchild node to node at index 0 of the root node
         node.next[0].next[5] = DecimalTreeNode(1)
         assert node.height() == 2
-        # Attach right-right grandchild node
+        # Attach grandchild node to the node at index 9 of the root
         node.next[9].next[5] = DecimalTreeNode(8)
         assert node.height() == 2
-        # Attach right-right-left great-grandchild node
+        # Attach great-grandchild node
         node.next[9].next[5].next[7] = DecimalTreeNode(7)
         assert node.height() == 3
+
+
+class DecimalSearchTreeTest(unittest.TestCase):
+
+    def test_init(self):
+        tree = DecimalSearchTree()
+        assert tree.root.data == "+"
+        assert tree.size == 0
+
+    def test_insert(self):
+        tree = DecimalSearchTree()
+        # Insert one item to the tree
+        tree.insert('0', 1, tree.root)
+        assert tree.size == 1
+        assert tree.height() == 1
+        child = tree.root.next[0]
+        assert child is not None
+        assert child.data == 1
+        # Insert a grandchild
+        tree.insert('01', 3, tree.root)
+        assert child.next[1] is not None
+        assert child.next[1].data == 3
+        assert tree.height() == 2
+
+    def test_inserting_lower_price(self):
+        tree = DecimalSearchTree()
+        # Insert one item to the tree
+        tree.insert('00', 1, tree.root)
+        tree.insert('00', 0.3, tree.root)
+        child_node = tree.root.next[0]
+        assert child_node.next[0].data == 0.3
+
