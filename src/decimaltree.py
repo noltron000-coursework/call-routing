@@ -5,7 +5,7 @@
 # Thank you to him for taking the time to explain this data structure.
 
 class DecimalTreeNode(object):
-    def __init__(self, data):
+    def __init__(self, data=None):
         """
         Initialize a decimal tree node with the given data.
         """
@@ -24,13 +24,12 @@ class DecimalTreeNode(object):
         self.next = [None] * 10
         # NOTE: the root node represents a 0-length number.
 
-
     def __repr__(self):
         """
         Visually represent this node using a string.
         Return the string.
         """
-        return 'DecimalTreeNode({!r})'.format(self.data)
+        return f'DecimalTreeNode({self.data!r})'
 
 
     def is_leaf(self):
@@ -79,85 +78,176 @@ class DecimalTreeNode(object):
         return tallest_child + 1
 
 
-# Decimal Search tree configured to the call routing project
+# Decimal Search tree configured to the call routing project.
 class DecimalSearchTree(object):
-
     def __init__(self, items=None):
-        """Initialize this binary search tree and insert the given items."""
-        self.root = DecimalTreeNode('+')
+        """
+        Initialize search tree with given items.
+        """
+        self.root = DecimalTreeNode('+') 
+        # HACK maybe we can remove the '+' as a value. We can assume it starts at '+'.
+        # XXX reword these comments below.
         # The inputted data will be a tuple = ("Carrier Name", (route number , route price))
         # Tree node data will be a tuple ("Carrier name", route price)
+
         self.size = 0
         # What is items going to be? []
         # if items is not None:
         #     for item in items:
 
+
     def __repr__(self):
-        """Return a string representation of this binary search tree."""
-        return 'DecimalSearchTree({} nodes)'.format(self.size)
+        """
+        Visually represent this tree using a string.
+        Return the formatted string.
+        """
+        return f'DecimalSearchTree({self.size} nodes)'
+
 
     def is_empty(self):
-        """Return True if this decimal search tree is empty (has no nodes)."""
+        """
+        Check if there are literally no nodes in this tree.
+        Return True or False based on result.
+        """
         return self.root is None
 
+
     def height(self):
-        """Return the height of this tree (the number of edges on the longest
-           downward path from this tree's root node to a descendant leaf node).
-           Best and worst case running time: O(n) where n is the number nodes in the tree"""
+        """
+        Return the height of the root node.
+        ~~~
+        best & worst case time complexity: O(n)
+        --> same complexity as referenced method.
+        """
         return self.root.height()
 
-    def contains(self, number):
-        """Return True if this Decimal search tree contains a path at contains all the numbers.
-        Best case running time: O(1) if the targeted item is in the root node
-        Worst case running time: O(log10n) -> O(log n) since the search size is reduced by 10 % with each iteration
-                                 n is the number of nodes in the tree"""
-        # Find whether the tree has a path that contains all the numbers in order
+
+    def contains(self, number): 
+        # FIXME contains is not semantic. 
+        # node_exists() would be more meaningful.
+        # contains() implies it contains data.
+        # we could write another function for contains()...
+        # in this modified tree, the data is a price.
+        # finding a price is not usually what we want to do.
+        # we want to find the phone number.
+        # this is represented by its path.
+        """
+        Does this search tree have the given path?
+        - Yes! Return True; the item is found.
+        - No! Return False; the item is not found.
+        ---
+        best case runtime: O(1)
+        --> the root node contains our item.
+        ---
+        median case runtime: O(ln(n))
+        --> the item is a leaf in a balanced tree.
+        ---
+        worst case runtime: O(n)
+        --> the tree can be represented using a linked list.
+            the item is at the tail of the linked list.
+        """
+        # find a node with a certain path, if it exists.
+        # the node must contain data to be valid.
+        # the node's path is determined by the given number.
         node = self._find_node_recursive(number, self.root)
+
+        # return True if the node is found, or False if not.
         return node is not None
 
+
     def search(self, item):
-        """Return an item in this decimal search tree matching the given item,
-        or None if the given item is not found.
-        Best case running time: O(1) if the targeted item is in the root node
-        Worst case running time: O(log10n) -> O(log n) since the search size is reduced by 10 % with each iteration
-                                 n is the number of nodes in the tree"""
-        # Find a node with the given item, if any
+        """
+        Does this search tree contain the given item?
+        - Yes! Return our Node; the item's container.
+        - No! Return None; item does not exist in any node.
+        ---
+        best case runtime: O(1)
+        --> the root node contains our item.
+        ---
+        median case runtime: O(ln(n))
+        --> the item is a leaf in a balanced tree.
+        ---
+        worst case runtime: O(n)
+        --> the tree can be represented using a linked list.
+            the item is at the tail of the linked list.
+        """
+        # find a node with the given item, if any
         node = self._find_node_recursive(item, self.root)
-        # node = self._find_parent_node_iterative(item)
-        # Return the node's data if found, or None
+        # return the node if it is found, or None if not.
         return node.data if node is not None else None
 
-    def insert(self, number, data):
-        self._insert(number, data, self.root)
+        # HACK it seems we are returning a node's data:
+        # - it would be best if we returned the node itself.
+        # - this would allow for a more versatile function.
+        # - also the return line makes my eyes cross!
+        #   it has too much going on, break apart.
 
-    def _insert(self, number, data,  node):
-        """TODO: Modify this code to the data type being passed in"""
-        """Insert the number in order of the Decimal Search Tree recursively."""
-        # Check if the number has done traversing
-        if len(number) == 0:
-            # Insert the data there aren't any
+
+    def insert(self, phone, data, node='ROOT'):
+        """
+        insert a phone number into this tree.
+        its data is the carrier price.
+        we might have to generate a sequence of empty nodes.
+        these empty nodes still have semantic meaning.
+        TODO improve docstring
+        ~~~
+        best case runtime: O(XXX)
+        --> XXX
+        ---
+        median case runtime: O(XXX)
+        --> XXX
+        ---
+        worst case runtime: O(XXX)
+        --> XXX
+
+        TODO: Modify this code to the data type being passed in.
+        Insert the phone# in order of the Decimal Search Tree recursively.
+        """
+        # do we start at the root node?
+        if node == 'ROOT':
+            node = self.root
+
+        # check whether our phone# is an empty string.
+        # that would mean the node is our injection site!
+        if not phone:
+            # now inject data at our node.
+            # first ensure there is no data at our node.
             if node.data is None:
                 node.data = data
                 self.size += 1
-            # There are data, but check if it greater than the new data
-            elif node.data[1] > data[1]:  # Data will be (carrier name, price)
+
+            # data will be (carrier name, price)
+            # - HACK: would it not make more sense to use.
+            # - a dictionary for data? {carrier name: price}
+            # if there is already data, keep the lower one!
+            elif node.data[1] > data[1]:
                 node.data = data
-            return
 
-        index = int(number[0])  # Use the first number of the string of numbers to decide where to go
-        remainder = number[1:]  # Reduce the numbers string
+        else:
+            # find digit.
+            digit = int(phone[0])
+            # remove digit from phone# string.
+            phone = phone[1:]
 
-        if node.next[index] is None:  # Signalling that there is no node at that index
-            node.next[index] = DecimalTreeNode(None)   # Not putting the data here since there is still a remainder
+            # check if next node exists.
+            if node.next[digit] is None:
+                # initialize empty node and point to it.
+                node.next[digit] = DecimalTreeNode()
 
-        self._insert(remainder, data, node.next[index])  # Call recursively with the remainder and node at index
+            # recursively call insert here.
+            # - use remaining phone number,
+            # - the same data,
+            # - and the next node determined by this digit.
+            self.insert(phone, data, node.next[digit])
 
     def _find_node_recursive(self, number, node):
-        """Return the node containing the given item in this decimal search tree,
+        """
+        Return the node containing the given item in this decimal search tree,
         or None if the given item is not found. Search is performed recursively
         starting from the given node (give the root node to start recursion).
         Best case running time: O(1) if the targeted item is in the root node
-        Worst case running time: O(log10n) -> O(log n) since the search size is reduced by 10 % with each iteration"""
+        Worst case running time: O(log10n) -> O(log n) since the search size is reduced by 10 % with each iteration
+        """
 
         if len(number) == 0:  # Signalling that the tree has a path that contains all the numbers
             return node
