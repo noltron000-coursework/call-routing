@@ -1,40 +1,45 @@
 import os
 
 SRC_FOLDER = os.path.abspath(os.path.dirname(__file__))
-DATA_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
+DATA_FOLDER = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), "..", "data"))
 
 
-def parse_data(data_files, make_dict_helper):
+def parse_data(file_name, make_dict_helper):
     """
     read_data() will check if the python data file exists.
     if it doesn"t exist, it will open the text data file,
     & it will then create the respective python data file.
     """
-    # loop through each data file here.
-    for file_name in data_files:
-        # record the path of the data files.
-        file_path_txt = os.path.join(DATA_FOLDER, file_name + ".txt")
-        file_path_py = os.path.join(SRC_FOLDER, file_name + ".py")
+    # record the path of the text data files.
+    file_path_txt = os.path.join(
+        DATA_FOLDER, file_name + ".txt")
 
-        try: # do nothing if the python data file exists.
-            # open the python file if it exists...
-            file = open(file_path_py, "r")
-            # if there was no error, it exists!
+    # record the path of the python data files.
+    file_path_py = os.path.join(
+        SRC_FOLDER, file_name + ".py")
 
-        except: # otherwise, process the text data file.
-            # open text file for reading
-            txt_file = open(file_path_txt, "r")
-            # create new python file for writing
-            py_file = open(file_path_py, "w+")
+    try: # do nothing if the python data file exists.
+        # open the python file if it exists...
+        file = open(file_path_py, "r")
+        # if there was no error, it exists!
 
-            # generate dictionary using the helper function.
-            dictionary = make_dict_helper(txt_file)
-            # print data into file to be imported later.
-            print('dictionary = ' + str(dictionary), file=py_file)
+    except: # otherwise, process the text data file.
+        # open text file for reading
+        txt_file = open(file_path_txt, "r")
+        # create new python file for writing
+        py_file = open(file_path_py, "w+")
 
-            # close files for good practice
-            txt_file.close()
-            py_file.close()
+        # generate dictionary using the helper function.
+        dictionary = make_dict_helper(txt_file)
+        file_content = "dictionary = " + str(dictionary)
+
+        # print data into file to be imported later.
+        print(file_content, file=py_file)
+
+        # close files for good practice
+        txt_file.close()
+        py_file.close()
 
 
 def _make_phone_dict(file):
@@ -58,7 +63,6 @@ def _make_route_dict(file):
         # get the route and price from this line.
         route, price = line.split(",")
         price = float(price)
-
         # check if route exists.
         if route in route_dict:
             # if it does, check its price.
@@ -74,30 +78,45 @@ def _make_route_dict(file):
     return route_dict
 
 
-def main():
-    # all the names of the data files.
-    phone_data_files = (
-        "phone-numbers-3",
-        "phone-numbers-10",
-        "phone-numbers-100",
-        "phone-numbers-1000",
-        "phone-numbers-10000",
-    )
-    route_data_files = (
-        "route-costs-10",
-        "route-costs-100",
-        "route-costs-600",
-        "route-costs-35000",
-        "route-costs-106000",
-        "route-costs-1000000",
-        "route-costs-10000000",
-    )
-    # run the function process here.
-    print('generating data files...')
-    parse_data(phone_data_files, _make_phone_dict)
-    parse_data(route_data_files, _make_route_dict)
-    print('...process completed!')
+def main(phone_data=None, route_data=None):
+    # ensure data is given
+    if phone_data and route_data:
+        # parse given data into files
+        parse_data(phone_data, _make_phone_dict)
+        parse_data(route_data, _make_route_dict)
 
+    else:
+        # no data was specified.
+        # all known files will be parsed.
+        phone_data_files = (
+            "phone-numbers-3",
+            "phone-numbers-10",
+            "phone-numbers-100",
+            "phone-numbers-1000",
+            "phone-numbers-10000",
+        )
+        route_data_files = (
+            "route-costs-10",
+            "route-costs-100",
+            "route-costs-600",
+            "route-costs-35000",
+            "route-costs-106000",
+            "route-costs-1000000",
+            "route-costs-10000000",
+        )
+
+        # convert all the data that were just defined
+        for data in phone_data_files:
+            # emphasize this is the phone_data
+            phone_data = data
+            parse_data(phone_data, _make_phone_dict)
+
+        for data in route_data_files:
+            # emphasize this is the route_data
+            route_data = data
+            parse_data(route_data, _make_route_dict)
+
+    # function is complete; good to go!
 
 if __name__ == "__main__":
     main()

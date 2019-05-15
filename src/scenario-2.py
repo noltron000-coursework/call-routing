@@ -6,17 +6,19 @@ a list of 1000 phone numbers, in an arbitrary order.
 How can you operationalize the route cost lookup problem?
 """
 
-# import python modules
+
+# import necessary modules
 import time
 import platform
 import resource
+import convert # local module
 
-# run convert module
-import convert
-convert.main()
 
 class CallRouting:
     def __init__(self, phone_numbers, route_costs):
+        # run convert to generate files
+        convert.main(phone_numbers, route_costs)
+
         # import data dictionaries
         # from given text file inputs
         phone_dict = __import__(phone_numbers)
@@ -38,6 +40,7 @@ class CallRouting:
         # generate a list of numbers with prices.
         self.get_prices()
 
+
     def __repr__(self):
         """
         String representation of a dictionary.
@@ -50,6 +53,7 @@ class CallRouting:
             entry = f"{' '*(14-len(key))}{key}: ${price}\n"
             pretty_dict += entry
         return pretty_dict
+
 
     def get_prices(self):
         """
@@ -91,9 +95,11 @@ class CallRouting:
                 self.price_dict[phone] = 0
         pass  # end for loop
 
+
 def benchmark_memory():
     # get memory usage
-    usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    usage = resource.getrusage(
+        resource.RUSAGE_SELF).ru_maxrss
 
     # linux returns kb and macOS returns bytes,
     # here we convert both to mb
@@ -107,13 +113,17 @@ def benchmark_memory():
     # return memory usage string
     return(f"Memory Usage: {usage} mb")
 
+
 if __name__ == "__main__":
     # stopwatch ready, set, go!
     start = time.time()
 
-    # create CallRouter class, and print its dict
-    route = CallRouting("phone-numbers-10000", "route-costs-10000000")
-    # route = CallRouting("phone-numbers-1000", "route-costs-106000")
+    # NOTE change these values if you want different files.
+    phone_numbers = "phone-numbers-10000"
+    route_costs = "route-costs-10000000"
+
+    # create CallRouter class, and print its dict.
+    route = CallRouting(phone_numbers, route_costs)
 
     # print the pricelist for the route;
     # required as the expected result for the assignment
@@ -123,5 +133,16 @@ if __name__ == "__main__":
     end = time.time()
 
     # print benchmarks
-    print(f"     Runtime: {str(round(end - start, 3))} sec")
+    runtime = (round(end - start, 3))
+
+    # print warning about long runtimes
+    if runtime > 10:
+        print("""
+        The first time this file runs, it is slow.
+        It will be faster on your next run.
+        __pycache__ will store some data; our app will
+        also generates some dictionaries for future use.\n
+        """)
+
+    print(f"     Runtime: {str(runtime)} sec")
     print(benchmark_memory())
