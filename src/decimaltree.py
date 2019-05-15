@@ -1,6 +1,8 @@
 # The reason for this tree to exit is to avoid unnecessary prefix checking if there are none
 # Most of this code will be from binary tree class but with modification
 
+# There code were heavily inspired by SW Harrison's implementation of a Decimal Search Tree
+# Thank you to him for taking the time to explain this data structure.
 
 class DecimalTreeNode(object):
 
