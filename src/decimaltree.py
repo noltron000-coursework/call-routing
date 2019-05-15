@@ -88,18 +88,20 @@ class DecimalSearchTree(object):
         # Return the node's data if found, or None
         return node.data if node is not None else None
 
-    def insert(self, number, data,  node):
+    def insert(self, number, data):
+        self._insert(number, data, self.root)
+
+    def _insert(self, number, data,  node):
         """TODO: Modify this code to the data type being passed in"""
         """Insert the number in order of the Decimal Search Tree recursively."""
         # Check if the number has done traversing
         if len(number) == 0:
-            print(node.data)
             # Insert the data there aren't any
             if node.data is None:
                 node.data = data
                 self.size += 1
             # There are data, but check if it greater than the new data
-            elif node.data > data:
+            elif node.data[1] > data[1]:  # Data will be (carrier name, price)
                 node.data = data
             return
 
@@ -109,7 +111,7 @@ class DecimalSearchTree(object):
         if node.next[index] is None:  # Signalling that there is no node at that index
             node.next[index] = DecimalTreeNode(None)   # Not putting the data here since there is still a remainder
 
-        self.insert(remainder, data, node.next[index])  # Call recursively with the remainder and node at index
+        self._insert(remainder, data, node.next[index])  # Call recursively with the remainder and node at index
 
     def _find_node_recursive(self, number, node):
         """Return the node containing the given item in this decimal search tree,
@@ -128,3 +130,32 @@ class DecimalSearchTree(object):
             return self._find_node_recursive(remainder, node.next[next_index])  # Keep search until the remainder is 0
         else:  # Signalling that there is no more path that contains matching number
             return None
+
+    def find_prices(self, number):
+        """Find the longest matching prefix of a number and get its price and carrier"""
+        return self._find_prices(number, self.root)
+
+    def _find_prices(self, number, node, data=None):
+        """Find the longest matching prefix of a number and get its price and carrier"""
+
+        current = data
+        if len(number) == 0:
+            return current
+
+        next_index = int(number[0])
+        remainder = number[1:]
+
+        if node.next[next_index] is not None:
+            next_node = node.next[next_index]
+            if next_node.data is not None:
+                if current is not None:
+                    if next_node.data[1] < current[1]:
+                        return self._find_prices(remainder, next_node, next_node.data)
+                    else:
+                        return self._find_prices(remainder, next_node, current)
+                else:
+                    return self._find_prices(remainder, next_node, next_node.data)
+            else:
+                return self._find_prices(remainder, next_node, next_node.data)
+        else:
+            return current

@@ -4,14 +4,13 @@
 # and a list of 10,000 phone numbers. How can you speed up your route cost lookup solution
 # to handle this larger dataset?
 
-import time
+from decimaltree import DecimalSearchTree
 import os
 import resource
 import platform
+import time
 
 THIS_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', "data"))
-
-"""TODO: Might Have to modify this since I don't know if we have to know the carrier name"""
 
 
 class CallRouting:
@@ -20,7 +19,7 @@ class CallRouting:
         self.carriers = self._format_carriers(carriers)  # A dictionary of {'carrier name', file path}
 
         self.phone_numbers_paths = []
-
+        self.decimal_search_tree = DecimalSearchTree()
         for file in phone_number_files:
             self.phone_numbers_paths.append(os.path.join(THIS_FOLDER, file + '.txt'))  # A path string of to the phone number file
 
@@ -28,16 +27,27 @@ class CallRouting:
         self.list_of_numbers = []  # list of strings  [phone numbers]
 
     def run(self):
+        start_creating_dict = time.time()
         self._get_routes_from_carriers()
         self._get_phone_numbers()
+        end = time.time()
+        print("Runtime to create dictionary of carriers and routes, and phone number: " + str(end - start_creating_dict))
+
+        start_creating_tree = time.time()
+        self.popuplate_tree()
+        end_tree = time.time()
+        print('Runtime for creating tree: ' + str(end_tree - start_creating_tree))
+
+        start_searching = time.time()
+        self.check_prices()
+        end_searching = time.time()
+        print("Runtime for searching phone number: " + str(end_searching - start_searching))
 
     def _get_phone_numbers(self):
         """Convert the given phone numbers file to a list of phone number [String]"""
         for path in self.phone_numbers_paths:
             with open(path) as f:
                 self.list_of_numbers = f.read().splitlines()
-
-        print(len(self.list_of_numbers))
 
     def _format_carriers(self, carriers):
         """Format the carrier dictionary value into a proper file path."""
@@ -61,68 +71,49 @@ class CallRouting:
                     else:
                         self.dict_of_routes[key] = [tup]
 
+    def popuplate_tree(self):
+        """Convert the dictionary of routes prices into a tree"""
+        for key in self.dict_of_routes.keys():
+            list_of_route_prices = self.dict_of_routes[key]
+            for item in list_of_route_prices:
+                number = item[0][1:]
+                data = (key, item[1])
+                self.decimal_search_tree.insert(number, data)
 
-    # def _get_routes_dict(self):
-    #     """Convert the given routes file to a dictionary {route number : lowest price}"""
-    #     for path in self.routes_paths:
-    #         with open(path) as f:
-    #             file = f.read().splitlines()
-    #
-    #             for line in file:
-    #                 route_number, price = line.split(",")  # Split the route into route_number , price
-    #
-    #                 if route_number in self.dict_of_routes:  # Check if the route number existed in the dictionary
-    #
-    #                     current_value = self.dict_of_routes[route_number]  # The existing price for the route
-    #                     new_value = float(price)  # The new price for the same route
-    #
-    #                     if new_value < current_value:  # Check if the new price is less than the existing price
-    #                         self.dict_of_routes[route_number] = new_value
-    #
-    #                 else:
-    #                     self.dict_of_routes[route_number] = float(price)  # Set a new key value to the dictionary
+    def check_prices(self):
+        """Check the price of the phone numbers in the tree"""
+        result_prices = []  # [(phone number, (carrier name, price))]
+        for number in self.list_of_numbers:
+            search_result = self.decimal_search_tree.find_prices(number[1:])
+            if search_result is None:  # signalling that there is no matching prefix for the current number
+                result_prices.append((number, ('None', 0)))  # Appending this way to keep everything consistent
+            else:
+                result_prices.append((number, search_result))  # Found the longest matching prefix and got a price
 
-    # def _get_prices(self):
-    #     """Get the lowest prices for each phone number by matching the most matched prefix route"""
-    #     price_for_phone = {}
-    #
-    #     for number in self.list_of_numbers:  # loop through the list of phone numbers
-    #         num_string = ''  # Act as a prefix for the phone number
-    #         for character in number:
-    #             num_string += character  # Add a character to the prefix
-    #
-    #             if num_string in self.dict_of_routes:  # if the prefix is in the dictionary of routes
-    #                 price_for_phone[number] = self.dict_of_routes[num_string]  # Set the price to the phone number
-    #
-    #         if number not in price_for_phone:  # The phone number doesn't have any matching prefixes
-    #             price_for_phone[number] = 0
-    #
-    #     for key in price_for_phone.keys():  # Print the expected output for the assignment
-    #         price = price_for_phone[key]
-    #         print(key + ',' + str(price))
+        return result_prices
 
 
-phone_data_files = (
+phone_data_files = [
     "phone-numbers-3",
     "phone-numbers-10",
     "phone-numbers-100",
     "phone-numbers-1000",
     "phone-numbers-10000",
-)
+]
 
-route_carriers = (('Carrier A', "route-costs-10"),
+route_carriers = [('Carrier A', "route-costs-10"),
                   ('Carrier B', "route-costs-100"),
                   ('Carrier C', "route-costs-600"),
                   ('Carrier D', "route-costs-35000"),
                   ('Carrier E', "route-costs-106000"),
-                  ('Carrier F', "route-costs-1000000"))
+                  ('Carrier F', "route-costs-1000000")]
 
 route = CallRouting(phone_data_files, route_carriers)
 
 start = time.time()
 route.run()
 end = time.time()
-print('\nRuntime: ' + str(end - start))
+print('\nOver allRuntime: ' + str(end - start))
 
 # get memory usage
 usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss

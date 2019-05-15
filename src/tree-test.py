@@ -76,43 +76,44 @@ class DecimalSearchTreeTest(unittest.TestCase):
         """TODO: Modify this test after changing the input data"""
         tree = DecimalSearchTree()
         # Insert one item to the tree
-        tree.insert('0', 1, tree.root)
+        tree.insert('0', ("hello", 1))
         assert tree.size == 1
         assert tree.height() == 1
         child = tree.root.next[0]
         assert child is not None
-        assert child.data == 1
+        assert child.data == ("hello", 1)
         # Insert a grandchild
-        tree.insert('01', 3, tree.root)
+        tree.insert('01', ("hello", 1))
         assert child.next[1] is not None
-        assert child.next[1].data == 3
+        assert child.next[1].data == ("hello", 1)
         assert tree.height() == 2
 
     def test_inserting_lower_price(self):
         """TODO: Modify this test after changing the input data"""
         tree = DecimalSearchTree()
         # Insert one item to the tree
-        tree.insert('00', 1, tree.root)
-        tree.insert('00', 0.3, tree.root)
+        tree.insert('00', ("hello", 1))
+        tree.insert('00', ("hello", 0.3))
         child_node = tree.root.next[0]
         # Change the data since it is larger
-        assert child_node.next[0].data == 0.3
-        tree.insert('01', 34, tree.root)
-        assert child_node.next[1].data == 34
+        assert child_node.next[0].data == ("hello", 0.3)
+        tree.insert('01', ("hello", 34))
+        assert child_node.next[1].data == ("hello", 34)
         # Doesn't change the data since it is larger
-        tree.insert('01', 43, tree.root)
-        assert child_node.next[1].data == 34
+        tree.insert('01', ("hello", 43))
+        assert child_node.next[1].data == ("hello", 34)
 
     def test_contains(self):
         """TODO: Modify this test after changing the input data"""
         tree = DecimalSearchTree()
-        tree.insert('00', 1, tree.root)
+        tree.insert('00', 1)
         assert tree.contains('00') is True
         assert tree.contains('0') is True
         assert tree.contains('01') is False
 
     def test_search(self):
         tree = DecimalSearchTree()
-        tree.insert('00', 0.3, tree.root)
-        assert tree.search('00') == 0.3
+        tree.insert('00', ('hello', 1))
+
+        assert tree.search('00') == ('hello', 1)
         assert tree.search('001') is None
