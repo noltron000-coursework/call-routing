@@ -5,44 +5,81 @@
 # Thank you to him for taking the time to explain this data structure.
 
 class DecimalTreeNode(object):
-
     def __init__(self, data):
-        """Initialize this decimal tree node with the given data."""
+        """
+        Initialize a decimal tree node with the given data.
+        """
+        # the difference between binary and decimal trees:
+        # - binary trees have 2 children.
+        # - decimal trees have 10 children.
+        # - n-ary trees have n children.
+
+        # like a binary tree, each node has a data point.
         self.data = data
-        self.next = [None] * 10  # We can use the phone numbers as index to the child
+
+        # rather than having left & right pointers:
+        # - we have an array that always has a length 10.
+        # - the array's nth item represents the nth decimal.
+        # - each item is one of the node's children.
+        self.next = [None] * 10
+        # NOTE: the root node represents a 0-length number.
+
 
     def __repr__(self):
-        """Return a string representation of this decimal tree node."""
+        """
+        Visually represent this node using a string.
+        Return the string.
+        """
         return 'DecimalTreeNode({!r})'.format(self.data)
 
+
     def is_leaf(self):
-        """Return True if this node is a leaf (has no children)."""
+        """
+        Check if this node is a leaf (has no children).
+        Return True or False based on result.
+        """
         return self.next == [None] * 10
 
+
     def is_branch(self):
-        """Return True if this node is a branch (has at least one child)."""
+        """
+        Check if this node is a branch (has any children).
+        Return True or False based on result.
+        """
         return self.next != [None] * 10
 
+
     def height(self):
-        """Return the height of this node (the number of edges on the longest
-           downward path from this node to a descendant leaf node).
-           Best and worst case running time: O(n) where n is the number of nodes in the tree"""
-        # Check if the node has a child or not
+        """
+        Return the height of this node.
+        The height is the number edges on the path to get
+        to the lowest descendant leaf node possible.
+        If this node itself is a leaf, it has a height of 0.
+        The height of a non-existant node (NoneType) is 0.
+        ~~~
+        best & worst case time complexity: O(n)
+        --> we must traverse every node to find the height.
+        """
+        # check if the node has a child or not.
         if self.is_leaf():
             return 0
 
-        ten_sides = [0] * 10
+        # track the height of our tallest child.
+        tallest_child = 0
 
-        for path in range(10):
-            if self.next[path] is not None:
-                ten_sides[path] += self.next[path].height()
+        # we need to check each and every child's height.
+        for child in self.next:
+            # measure this child's height.
+            child_height = child.height()
+            # if this child is really tall, track it.
+            if child_height > tallest_child:
+                tallest_child = child_height
 
-        # Return one more than the greater of the left height and right height
-        return max(ten_sides) + 1
+        # add 1 to include this node in the height tracker.
+        return tallest_child + 1
 
 
 # Decimal Search tree configured to the call routing project
-
 class DecimalSearchTree(object):
 
     def __init__(self, items=None):
