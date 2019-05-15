@@ -158,6 +158,6 @@ class DecimalSearchTree(object):
                 else:
                     return self._find_prices(remainder, next_node, next_node.data)
             else:
-                return self._find_prices(remainder, next_node, next_node.data)
+                return self._find_prices(remainder, next_node, current)
         else:
             return current
