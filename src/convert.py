@@ -1,6 +1,10 @@
 import os
 
-SRC_FOLDER = os.path.abspath(os.path.dirname(__file__))
+
+# find the src directory - this holds our python files.
+SRC_FOLDER = os.path.abspath(
+    os.path.dirname(__file__))
+# find the data directory - this holds our text data files.
 DATA_FOLDER = os.path.abspath(os.path.join(
     os.path.dirname(__file__), "..", "data"))
 
@@ -25,9 +29,9 @@ def parse_data(file_name, make_dict_helper):
         # if there was no error, it exists!
 
     except: # otherwise, process the text data file.
-        # open text file for reading
+        # open text file for reading.
         txt_file = open(file_path_txt, "r")
-        # create new python file for writing
+        # create new python file for writing.
         py_file = open(file_path_py, "w+")
 
         # generate dictionary using the helper function.
@@ -37,7 +41,7 @@ def parse_data(file_name, make_dict_helper):
         # print data into file to be imported later.
         print(file_content, file=py_file)
 
-        # close files for good practice
+        # close files for good practice.
         txt_file.close()
         py_file.close()
 
@@ -79,9 +83,9 @@ def _make_route_dict(file):
 
 
 def main(phone_data=None, route_data=None):
-    # ensure data is given
+    # ensure data is given.
     if phone_data and route_data:
-        # parse given data into files
+        # parse given data into files.
         parse_data(phone_data, _make_phone_dict)
         parse_data(route_data, _make_route_dict)
 
@@ -95,6 +99,7 @@ def main(phone_data=None, route_data=None):
             "phone-numbers-1000",
             "phone-numbers-10000",
         )
+
         route_data_files = (
             "route-costs-10",
             "route-costs-100",
@@ -105,18 +110,17 @@ def main(phone_data=None, route_data=None):
             "route-costs-10000000",
         )
 
-        # convert all the data that were just defined
+        # convert all the data that were just defined.
         for data in phone_data_files:
-            # emphasize this is the phone_data
+            # emphasize this is the phone_data.
             phone_data = data
             parse_data(phone_data, _make_phone_dict)
 
         for data in route_data_files:
-            # emphasize this is the route_data
+            # emphasize this is the route_data.
             route_data = data
             parse_data(route_data, _make_route_dict)
 
-    # function is complete; good to go!
 
 if __name__ == "__main__":
     main()

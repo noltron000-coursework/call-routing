@@ -20,7 +20,7 @@ class CallRouting:
         convert.main(phone_numbers, route_costs)
 
         # import data dictionaries
-        # from given text file inputs
+        # from given text file inputs.
         phone_dict = __import__(phone_numbers)
         route_dict = __import__(route_costs)
 
@@ -49,7 +49,7 @@ class CallRouting:
         pretty_dict = ""
         for key in self.price_dict:
             price = self.price_dict[key]
-            # prettify entry before adding to output
+            # prettify entry before adding to output.
             entry = f"{' '*(14-len(key))}{key}: ${price}\n"
             pretty_dict += entry
         return pretty_dict
@@ -60,7 +60,7 @@ class CallRouting:
         Get the lowest prices for each phone number.
         Do this by matching the most matched prefix route.
         """
-        # loop through the list of phone numbers
+        # loop through the list of phone numbers.
         for phone in self.phone_dict:
             # slowly expand on the search of our phone num.
             # we start with the broadest possible match.
@@ -101,16 +101,16 @@ def benchmark_memory():
     usage = resource.getrusage(
         resource.RUSAGE_SELF).ru_maxrss
 
-    # linux returns kb and macOS returns bytes,
-    # here we convert both to mb
+    # linux returns kilobytes and macOS returns bytes.
+    # here we convert both to megabytes.
     if platform.system() == "linux":
-        # convert kb to mb and round to 2 digits
+        # convert kb to mb and round to 2 digits.
         usage = round(usage / float(1 << 10), 2)
     else:
-        # convert bytes to mb and round to 2 digits
+        # convert bytes to mb and round to 2 digits.
         usage = round(usage / float(1 << 20), 2)
 
-    # return memory usage string
+    # return memory usage string.
     return(f"Memory Usage: {usage} mb")
 
 
@@ -126,17 +126,18 @@ if __name__ == "__main__":
     route = CallRouting(phone_numbers, route_costs)
 
     # print the pricelist for the route;
-    # required as the expected result for the assignment
+    # required as the expected result for the assignment,
     print(route)
 
     # stopwatch finish!!
     end = time.time()
 
-    # print benchmarks
-    runtime = (round(end - start, 3))
+    # compute runtime.
+    runtime = round(end - start, 3)
 
-    # print warning about long runtimes
+    # check if the runtime is too long.
     if runtime > 10:
+        # print warning about long runtimes.
         print("""
         The first time this file runs, it is slow.
         It will be faster on your next run.
@@ -144,5 +145,6 @@ if __name__ == "__main__":
         also generates some dictionaries for future use.\n
         """)
 
+    # print benchmarks.
     print(f"     Runtime: {str(runtime)} sec")
     print(benchmark_memory())
