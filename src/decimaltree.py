@@ -51,9 +51,8 @@ class DecimalSearchTree(object):
         # The inputted data will be a tuple = ("Carrier Name", (route number , route price))
         # Tree node data will be a tuple ("Carrier name", route price)
         self.size = 0
-        # What is items going to be? []
-        # if items is not None:
-        #     for item in items:
+        for item in items:
+            self.insert(item[0], item[1])
 
     def __repr__(self):
         """Return a string representation of this binary search tree."""
@@ -94,7 +93,6 @@ class DecimalSearchTree(object):
         self._insert(number, data, self.root)
 
     def _insert(self, number, data,  node):
-        """TODO: Modify this code to the data type being passed in"""
         """Insert the number in order of the Decimal Search Tree recursively."""
         # Check if the number has done traversing
         if len(number) == 0:
