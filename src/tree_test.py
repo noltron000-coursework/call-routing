@@ -69,7 +69,7 @@ class DecimalSearchTreeTest(unittest.TestCase):
 
     def test_init(self):
         tree = DecimalSearchTree()
-        assert tree.root.data == "+"
+        assert tree.root.data == None
         assert tree.size == 0
 
     def test_insert(self):
