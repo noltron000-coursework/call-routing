@@ -90,7 +90,6 @@ class DecimalSearchTree(object):
         # the root node will always be empty.
         self.root = DecimalTreeNode()
         self.size = 0
-
         # insert items
         if items is not None:
             for item in items:
@@ -107,7 +106,6 @@ class DecimalSearchTree(object):
         # items is all the routes.
         # we traverse the route tree with our numbers.
         # TODO: initialize with item(s).
-
 
     def __repr__(self):
         """
@@ -188,6 +186,7 @@ class DecimalSearchTree(object):
     def insert(self, phone, data, node="ROOT"):
         """
         insert a given {phone:item} pair into this tree.
+        this function uses recursion.
         traverse the tree using the phone number.
         this leads to the node we need to inject with data.
         we might have to generate a sequence of empty nodes.
