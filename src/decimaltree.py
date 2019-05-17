@@ -84,7 +84,6 @@ class DecimalTreeNode(object):
         return tallest_child + 1
 
 
-# Decimal Search tree configured to the call routing project.
 class DecimalSearchTree(object):
     def __init__(self, items=None):
         """
@@ -99,17 +98,17 @@ class DecimalSearchTree(object):
             for item in items:
                 self.insert(item)
 
-        # a node's data will be a tuple.
+        # a node's item will be a tuple.
         # (carrier name, (route number, route price))
-        # HACK: maybe change the data type semantically.
+        # HACK: maybe change the item type semantically.
 
-        # the input data is a list of tuples.
+        # the input item is a list of tuples.
         # [(carrier name, (route number, route price)),...]
         # HACK: maybe make it a dictionary instead of tuple.
 
         # items is all the routes.
         # we traverse the route tree with our numbers.
-        # TODO: initialize with data(s).
+        # TODO: initialize with item(s).
 
 
     def __repr__(self):
@@ -220,7 +219,7 @@ class DecimalSearchTree(object):
                 node.data = data
                 self.size += 1
 
-            # data will be (carrier name, price)
+            # data will be (carrier name, price).
             # - HACK: would it not make more sense to use.
             # - a dictionary for data? {carrier name: price}
             # if there is already data, keep the lower one!
@@ -297,25 +296,37 @@ class DecimalSearchTree(object):
         """
         Find the longest matching prefix of a number and get its price and carrier
         """
-
-        current = data
         if len(number) == 0:
-            return current
+            return data
 
-        next_index = int(number[0])
+        digit = int(number[0])
         remainder = number[1:]
+        next_node = node.next[digit]
 
-        if node.next[next_index] is not None:
-            next_node = node.next[next_index]
-            if next_node.data is not None:
-                if current is not None:
-                    if next_node.data[1] < current[1]:
-                        return self._find_prices(remainder, next_node, next_node.data)
-                    else:
-                        return self._find_prices(remainder, next_node, current)
-                else:
-                    return self._find_prices(remainder, next_node, next_node.data)
-            else:
-                return self._find_prices(remainder, next_node, current)
-        else:
-            return current
+        # base case: the next node does not exist.
+        # this means we have found the longest path.
+        # return our data point.
+        if not next_node:
+            return data
+
+        # often we will find a node that exists without data.
+        # in this case we check the next node,
+        # but we make no changes to our data.
+        elif next_node and not next_node.data:
+            return self._find_prices(remainder, next_node, data)
+
+        # if the next node has data, we might want to grab it.
+        elif next_node and next_node.data:
+            # our data could be None.
+            # if this is the case, grab the data from this node.
+            # note that this node could still have None data too!
+            if not data:
+                return self._find_prices(remainder, next_node, next_node.data)
+            # if our data is bigger than nodes data
+            # replace our data with the node data!
+            elif next_node.data[1] < data[1]:
+                return self._find_prices(remainder, next_node, next_node.data)
+            # otherwise our data is already smaller;
+            # we can continue on without changing our data.
+            elif next_node.data[1] >= data[1]:
+                return self._find_prices(remainder, next_node, data)

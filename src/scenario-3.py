@@ -14,7 +14,6 @@ THIS_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', "dat
 
 
 class CallRouting:
-
     def __init__(self, phone_number_files, carriers):
         self.carriers = self._format_carriers(carriers)  # A dictionary of {'carrier name', file path}
 
