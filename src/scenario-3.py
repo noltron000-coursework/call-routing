@@ -83,7 +83,7 @@ class CallRouting:
         """Check the price of the phone numbers in the tree"""
         result_prices = []  # [(phone number, (carrier name, price))]
         for number in self.list_of_numbers:
-            search_result = self.decimal_search_tree.find_prices(number[1:])
+            search_result = self.decimal_search_tree.get_price(number[1:])
             if search_result is None:  # signalling that there is no matching prefix for the current number
                 result_prices.append((number, ('None', 0)))  # Appending this way to keep everything consistent
             else:

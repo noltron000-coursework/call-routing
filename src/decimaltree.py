@@ -1,9 +1,7 @@
-# The reason for this tree to exit is to avoid unnecessary prefix checking if there are none
-# Most of this code will be from binary tree class but with modification
-
-# There code were heavily inspired by SW Harrison's implementation of a Decimal Search Tree
-# Thank you to him for taking the time to explain this data structure.
-
+# This tree exists to avoid unnecessary prefix checking.
+# Most of this code is modified from the binary tree class.
+# This code is inspired by SW Harrison's implementations.
+# Thank him for taking time to explain this data structure!
 
 class DecimalTreeNode(object):
     def __init__(self, data=None):
@@ -231,17 +229,19 @@ class DecimalSearchTree(object):
             digit = int(phone[0])
             # remove digit from phone# string.
             phone = phone[1:]
+            # grab our next node.
+            next = node.next[digit]
 
             # check if next node exists.
-            if node.next[digit] is None:
+            if next is None:
                 # initialize empty node and point to it.
-                node.next[digit] = DecimalTreeNode()
+                next = DecimalTreeNode()
 
             # recursively call insert here.
             # - use remaining phone number,
             # - the same data,
             # - and the next node determined by this digit.
-            self.insert(phone, data, node.next[digit])
+            self.insert(phone, data, next)
 
 
     def _find_path_recursive(self, phone, node="ROOT"):
@@ -278,55 +278,74 @@ class DecimalSearchTree(object):
             digit = int(phone[0])
             # remove digit from phone# string.
             phone = phone[1:]
+            # grab our next node.
+            next = node.next[digit]
 
             # recursively call find_path here.
             # - use remaining phone number,
             # - and the next node determined by this digit.
-            return self._find_path_recursive(phone, node.next[digit])
+            return self._find_path_recursive(phone, next)
 
 
-    def find_prices(self, number):
+    def get_price(self, phone, node="ROOT", best_data=None):
         """
-        Find the longest matching prefix of a number and get its price and carrier
+        Find the longest matching prefix of a phone number.
+        We traverse this tree recursively.
+        Return its price and carrier.
         """
-        return self._find_prices(number, self.root)
+        # check if we start at the root node.
+        if node=="ROOT":
+            node=self.root
 
+        # if node is None, the path is a dead-end.
+        # return the last data that we found.
+        if node is None:
+            return best_data
 
-    def _find_prices(self, number, node, data=None):
-        """
-        Find the longest matching prefix of a number and get its price and carrier
-        """
-        if len(number) == 0:
-            return data
+        # check whether our phone# is an empty string.
+        # that would mean we have found our node!
+        elif not phone:
+            return best_data
 
-        digit = int(number[0])
-        remainder = number[1:]
-        next_node = node.next[digit]
+        else:
+            # find digit.
+            digit = int(phone[0])
+            # remove digit from phone# string.
+            phone = phone[1:]
+            # grab our next node.
+            next = node.next[digit]
 
-        # base case: the next node does not exist.
-        # this means we have found the longest path.
-        # return our data point.
-        if not next_node:
-            return data
+            # if the next node has data,
+            # it might be better than our best_data.
+            # lets peek inside and check.
+            if node.data:
+                # our best_data could still be None here.
+                # this happens when we don't find any data,
+                # even if we traversed a few nodes yet.
+                # in this case we grab the nodes data.
+                if not best_data:
+                    # the node's data could still be None!
+                    # this represents a waypoint node;
+                    # its an expected result.
+                    return self.get_price(
+                        phone, next, node.data)
 
-        # often we will find a node that exists without data.
-        # in this case we check the next node,
-        # but we make no changes to our data.
-        elif next_node and not next_node.data:
-            return self._find_prices(remainder, next_node, data)
+                # if the node's data is better,
+                # replace our best_data with it.
+                elif node.data[1] < best_data[1]:
+                    return self.get_price(
+                        phone, next, node.data)
 
-        # if the next node has data, we might want to grab it.
-        elif next_node and next_node.data:
-            # our data could be None.
-            # if this is the case, grab the data from this node.
-            # note that this node could still have None data too!
-            if not data:
-                return self._find_prices(remainder, next_node, next_node.data)
-            # if our data is bigger than nodes data
-            # replace our data with the node data!
-            elif next_node.data[1] < data[1]:
-                return self._find_prices(remainder, next_node, next_node.data)
-            # otherwise our data is already smaller;
-            # we can continue on without changing our data.
-            elif next_node.data[1] >= data[1]:
-                return self._find_prices(remainder, next_node, data)
+                # leave our best_data alone if we didn't
+                # find better data in the node.
+                elif node.data[1] >= best_data[1]:
+                    return self.get_price(
+                        phone, next, best_data)
+
+            # node.data doesn't have to exist.
+            # this happens often; it represents a waypoint.
+            # in this case we continue to the next node,
+            # but make no changes to our best_data.
+            else:
+                return self.get_price(
+                    phone, next, best_data)
